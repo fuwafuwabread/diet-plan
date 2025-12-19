@@ -1,9 +1,88 @@
-const plan = {
-  mon_lunch: ["A"],
-  mon_dinner: ["D"],
-  tue_lunch: ["B"],
-  tue_dinner: ["E"],
-  wed_lunch: ["C"],
-  wed_dinner: [], // チート
-  ...
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>食事→買い物 自動連動</title>
+<style>
+body{background:#0b1020;color:#e9ecf5;font-family:system-ui;padding:16px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #333}
+input{transform:scale(1.2)}
+.card{background:#111a33;padding:12px;border-radius:12px;margin-bottom:12px}
+.item{display:flex;gap:8px;align-items:center}
+</style>
+</head>
+<body>
+
+<h2>① 毎食チェック</h2>
+<div class="card">
+<table>
+<tr><th>曜日</th><th>昼</th><th>夜</th></tr>
+<tr><td>月</td><td><input type="checkbox" data-key="mon_lunch"></td><td><input type="checkbox" data-key="mon_dinner"></td></tr>
+<tr><td>火</td><td><input type="checkbox" data-key="tue_lunch"></td><td><input type="checkbox" data-key="tue_dinner"></td></tr>
+<tr><td>水</td><td><input type="checkbox" data-key="wed_lunch"></td><td><input type="checkbox" data-key="wed_dinner"></td></tr>
+<tr><td>木</td><td><input type="checkbox" data-key="thu_lunch"></td><td><input type="checkbox" data-key="thu_dinner"></td></tr>
+<tr><td>金</td><td><input type="checkbox" data-key="fri_lunch"></td><td><input type="checkbox" data-key="fri_dinner"></td></tr>
+<tr><td>土</td><td><input type="checkbox" data-key="sat_lunch"></td><td><input type="checkbox" data-key="sat_dinner"></td></tr>
+<tr><td>日</td><td><input type="checkbox" data-key="sun_lunch"></td><td><input type="checkbox" data-key="sun_dinner"></td></tr>
+</table>
+</div>
+
+<h2>② 必要な買い物</h2>
+<div class="card" id="shopping"></div>
+
+<script>
+const meals = {
+  A:["米","鮭","サラダ","味噌"],
+  B:["そば","卵","わかめ"],
+  C:["卵","納豆","米"],
+  D:["豚肉","白菜","きのこ","豆腐"],
+  E:["鶏肉","もやし"],
+  F:["豆腐","ツナ","キムチ"]
 };
+
+const plan = {
+  mon_lunch:["A"], mon_dinner:["D"],
+  tue_lunch:["B"], tue_dinner:["E"],
+  wed_lunch:["C"], wed_dinner:[], // チート
+  thu_lunch:["A"], thu_dinner:["D"],
+  fri_lunch:["B"], fri_dinner:["E"],
+  sat_lunch:["C"], sat_dinner:[], // チート
+  sun_lunch:["A"], sun_dinner:["F"]
+};
+
+const state = JSON.parse(localStorage.getItem("meal_state")||"{}");
+
+document.querySelectorAll("input").forEach(cb=>{
+  cb.checked = state[cb.dataset.key]||false;
+  cb.onchange=()=>{
+    state[cb.dataset.key]=cb.checked;
+    localStorage.setItem("meal_state",JSON.stringify(state));
+    render();
+  }
+});
+
+function render(){
+  const items=new Set();
+  Object.keys(state).forEach(k=>{
+    if(state[k]){
+      plan[k]?.forEach(m=>{
+        meals[m]?.forEach(i=>items.add(i));
+      });
+    }
+  });
+  const el=document.getElementById("shopping");
+  el.innerHTML="";
+  if(items.size===0){el.textContent="まだチェックされていません";return;}
+  items.forEach(i=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML=`<input type="checkbox"> ${i}`;
+    el.appendChild(d);
+  });
+}
+render();
+</script>
+
+</body>
+</html>
