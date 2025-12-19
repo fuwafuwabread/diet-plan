@@ -2,79 +2,188 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>食事→買い物 自動連動</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生活インフラ｜食事 × 買い物</title>
+
 <style>
-body{background:#0b1020;color:#e9ecf5;font-family:system-ui;padding:16px}
-table{width:100%;border-collapse:collapse}
-td,th{padding:8px;border-bottom:1px solid #333}
-input{transform:scale(1.2)}
-.card{background:#111a33;padding:12px;border-radius:12px;margin-bottom:12px}
-.item{display:flex;gap:8px;align-items:center}
+body{
+  margin:0;
+  padding:20px;
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP";
+  background:#0b1020;
+  color:#e9ecf5;
+}
+h1{font-size:22px;margin-bottom:12px}
+h2{font-size:18px;margin:24px 0 8px}
+
+.card{
+  background:#111a33;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+th{
+  color:#aab3d6;
+  font-weight:600;
+}
+input[type=checkbox]{
+  transform:scale(1.2);
+  margin-right:6px;
+}
+
+.menu-name{
+  color:#d7ccff;
+  font-size:13px;
+}
+
+.cheat{
+  color:#ffb020;
+  font-size:13px;
+}
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:6px 0;
+}
+
+.muted{
+  color:#aab3d6;
+  font-size:13px;
+}
 </style>
 </head>
+
 <body>
 
+<h1>生活インフラ｜食事 × 買い物</h1>
+
+<!-- ① 毎食チェック -->
 <h2>① 毎食チェック</h2>
 <div class="card">
 <table>
-<tr><th>曜日</th><th>昼</th><th>夜</th></tr>
-<tr><td>月</td><td><input type="checkbox" data-key="mon_lunch"></td><td><input type="checkbox" data-key="mon_dinner"></td></tr>
-<tr><td>火</td><td><input type="checkbox" data-key="tue_lunch"></td><td><input type="checkbox" data-key="tue_dinner"></td></tr>
-<tr><td>水</td><td><input type="checkbox" data-key="wed_lunch"></td><td><input type="checkbox" data-key="wed_dinner"></td></tr>
-<tr><td>木</td><td><input type="checkbox" data-key="thu_lunch"></td><td><input type="checkbox" data-key="thu_dinner"></td></tr>
-<tr><td>金</td><td><input type="checkbox" data-key="fri_lunch"></td><td><input type="checkbox" data-key="fri_dinner"></td></tr>
-<tr><td>土</td><td><input type="checkbox" data-key="sat_lunch"></td><td><input type="checkbox" data-key="sat_dinner"></td></tr>
-<tr><td>日</td><td><input type="checkbox" data-key="sun_lunch"></td><td><input type="checkbox" data-key="sun_dinner"></td></tr>
+<tr>
+  <th>曜日</th>
+  <th>昼</th>
+  <th>夜</th>
+</tr>
+
+<tr>
+  <td>月</td>
+  <td><label><input type="checkbox" data-key="mon_lunch"> <span class="menu-name">魚定食</span></label></td>
+  <td><label><input type="checkbox" data-key="mon_dinner"> <span class="menu-name">鍋</span></label></td>
+</tr>
+<tr>
+  <td>火</td>
+  <td><label><input type="checkbox" data-key="tue_lunch"> <span class="menu-name">そば温玉</span></label></td>
+  <td><label><input type="checkbox" data-key="tue_dinner"> <span class="menu-name">鶏もやし</span></label></td>
+</tr>
+<tr>
+  <td>水</td>
+  <td><label><input type="checkbox" data-key="wed_lunch"> <span class="menu-name">卵納豆</span></label></td>
+  <td><span class="cheat">チート</span></td>
+</tr>
+<tr>
+  <td>木</td>
+  <td><label><input type="checkbox" data-key="thu_lunch"> <span class="menu-name">魚定食</span></label></td>
+  <td><label><input type="checkbox" data-key="thu_dinner"> <span class="menu-name">鍋</span></label></td>
+</tr>
+<tr>
+  <td>金</td>
+  <td><label><input type="checkbox" data-key="fri_lunch"> <span class="menu-name">そば温玉</span></label></td>
+  <td><label><input type="checkbox" data-key="fri_dinner"> <span class="menu-name">鶏もやし</span></label></td>
+</tr>
+<tr>
+  <td>土</td>
+  <td><label><input type="checkbox" data-key="sat_lunch"> <span class="menu-name">卵納豆</span></label></td>
+  <td><span class="cheat">チート</span></td>
+</tr>
+<tr>
+  <td>日</td>
+  <td><label><input type="checkbox" data-key="sun_lunch"> <span class="menu-name">魚定食</span></label></td>
+  <td><label><input type="checkbox" data-key="sun_dinner"> <span class="menu-name">冷奴ツナ</span></label></td>
+</tr>
 </table>
 </div>
 
+<!-- ② 必要な買い物 -->
 <h2>② 必要な買い物</h2>
-<div class="card" id="shopping"></div>
+<div class="card" id="shopping">
+  <div class="muted">チェックされた食事から自動生成されます</div>
+</div>
+
+<!-- ③ メニュー凡例 -->
+<h2>③ メニュー凡例</h2>
+<div class="card muted">
+<b>魚定食</b>：ごはん100–150g＋焼き魚＋袋サラダ＋みそ汁<br>
+<b>そば温玉</b>：そば＋温玉＋わかめ/オクラ<br>
+<b>卵納豆</b>：卵2個＋納豆＋ごはん100g<br><br>
+
+<b>鍋</b>：豚しゃぶor鶏＋白菜/キャベツ＋きのこ＋豆腐<br>
+<b>鶏もやし</b>：鶏焼き＋もやし炒め<br>
+<b>冷奴ツナ</b>：豆腐＋ツナorキムチ＋温玉
+</div>
 
 <script>
 const meals = {
-  A:["米","鮭","サラダ","味噌"],
-  B:["そば","卵","わかめ"],
-  C:["卵","納豆","米"],
-  D:["豚肉","白菜","きのこ","豆腐"],
-  E:["鶏肉","もやし"],
-  F:["豆腐","ツナ","キムチ"]
+  fish:["米","鮭","サラダ","味噌"],
+  soba:["そば","卵","わかめ"],
+  egg:["卵","納豆","米"],
+  nabe:["豚肉","白菜","きのこ","豆腐"],
+  chicken:["鶏肉","もやし"],
+  tofu:["豆腐","ツナ","キムチ"]
 };
 
 const plan = {
-  mon_lunch:["A"], mon_dinner:["D"],
-  tue_lunch:["B"], tue_dinner:["E"],
-  wed_lunch:["C"], wed_dinner:[], // チート
-  thu_lunch:["A"], thu_dinner:["D"],
-  fri_lunch:["B"], fri_dinner:["E"],
-  sat_lunch:["C"], sat_dinner:[], // チート
-  sun_lunch:["A"], sun_dinner:["F"]
+  mon_lunch: meals.fish,
+  mon_dinner: meals.nabe,
+  tue_lunch: meals.soba,
+  tue_dinner: meals.chicken,
+  wed_lunch: meals.egg,
+  thu_lunch: meals.fish,
+  thu_dinner: meals.nabe,
+  fri_lunch: meals.soba,
+  fri_dinner: meals.chicken,
+  sat_lunch: meals.egg,
+  sun_lunch: meals.fish,
+  sun_dinner: meals.tofu
 };
 
 const state = JSON.parse(localStorage.getItem("meal_state")||"{}");
 
-document.querySelectorAll("input").forEach(cb=>{
-  cb.checked = state[cb.dataset.key]||false;
-  cb.onchange=()=>{
-    state[cb.dataset.key]=cb.checked;
-    localStorage.setItem("meal_state",JSON.stringify(state));
+document.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+  cb.checked = state[cb.dataset.key] || false;
+  cb.onchange = ()=>{
+    state[cb.dataset.key] = cb.checked;
+    localStorage.setItem("meal_state", JSON.stringify(state));
     render();
-  }
+  };
 });
 
 function render(){
-  const items=new Set();
+  const set = new Set();
   Object.keys(state).forEach(k=>{
-    if(state[k]){
-      plan[k]?.forEach(m=>{
-        meals[m]?.forEach(i=>items.add(i));
-      });
+    if(state[k] && plan[k]){
+      plan[k].forEach(i=>set.add(i));
     }
   });
-  const el=document.getElementById("shopping");
-  el.innerHTML="";
-  if(items.size===0){el.textContent="まだチェックされていません";return;}
-  items.forEach(i=>{
+  const el = document.getElementById("shopping");
+  el.innerHTML = "";
+  if(set.size===0){
+    el.innerHTML = "<div class='muted'>まだチェックされていません</div>";
+    return;
+  }
+  set.forEach(i=>{
     const d=document.createElement("div");
     d.className="item";
     d.innerHTML=`<input type="checkbox"> ${i}`;
