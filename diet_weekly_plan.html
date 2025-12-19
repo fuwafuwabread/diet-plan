@@ -1,521 +1,150 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>固定メニュー & まとめ買い（2食＋間食）</title>
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#111a33;
-      --panel2:#0f1730;
-      --text:#e9ecf5;
-      --muted:#aab3d6;
-      --line:rgba(255,255,255,.10);
-      --accent:#7c5cff;
-      --accent2:#36d399;
-      --warn:#ffb020;
-      --bad:#ff5c7a;
-      --shadow: 0 20px 60px rgba(0,0,0,.40);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:
-        radial-gradient(1200px 700px at 20% -10%, rgba(124,92,255,.28), transparent 60%),
-        radial-gradient(900px 600px at 90% 10%, rgba(54,211,153,.22), transparent 55%),
-        radial-gradient(900px 700px at 30% 110%, rgba(255,176,32,.16), transparent 55%),
-        linear-gradient(180deg, var(--bg), #070a14 70%);
-      color:var(--text);
-      font: 14px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
-      letter-spacing:.2px;
-    }
-    a{color:inherit}
-    .wrap{max-width:1100px; margin:0 auto; padding:34px 18px 60px}
-    header{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
-      margin-bottom:18px;
-    }
-    .title{display:flex; flex-direction:column; gap:8px}
-    h1{margin:0; font-size:22px; letter-spacing:.3px}
-    .subtitle{color:var(--muted); max-width:60ch}
-    .badge-row{display:flex; gap:10px; flex-wrap:wrap}
-    .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      background: rgba(255,255,255,.06);
-      border:1px solid var(--line);
-      padding:7px 10px;
-      border-radius:999px;
-      color:var(--muted);
-      backdrop-filter: blur(8px);
-    }
-    .dot{width:10px; height:10px; border-radius:50%}
-    .dot.a{background:var(--accent)}
-    .dot.b{background:var(--accent2)}
-    .dot.c{background:var(--warn)}
-    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
-    button{
-      appearance:none;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
-      white-space:nowrap;
-    }
-    button:hover{background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
-    button:active{transform: translateY(1px)}
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:14px;
-      margin-top:14px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      .subtitle{max-width:100%}
-      header{flex-direction:column}
-      .actions{justify-content:flex-start}
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .card .hd{
-      padding:14px 16px;
-      border-bottom: 1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background: linear-gradient(90deg, rgba(124,92,255,.10), rgba(54,211,153,.08));
-    }
-    .card .hd h2{margin:0; font-size:15px; letter-spacing:.3px}
-    .card .bd{padding:14px 16px}
-    .hint{color:var(--muted); font-size:12.5px}
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      border:1px solid var(--line);
-      padding:6px 10px;
-      border-radius:999px;
-      background: rgba(17,26,51,.55);
-      color:var(--muted);
-      font-size:12px;
-    }
-    .pill strong{color:var(--text); font-weight:600}
-    .pill .mini{width:8px; height:8px; border-radius:99px; background: var(--accent2)}
-    .pill.warn .mini{background: var(--warn)}
-    .pill.bad .mini{background: var(--bad)}
-    .rule-list{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    @media (max-width: 650px){ .rule-list{grid-template-columns:1fr} }
-    .rule{
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(15,23,48,.55);
-    }
-    .rule b{display:block; margin-bottom:4px}
-    .rule p{margin:0; color:var(--muted)}
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(15,23,48,.55);
-    }
-    th, td{
-      padding:11px 10px;
-      border-bottom:1px solid var(--line);
-      vertical-align:top;
-    }
-    th{
-      text-align:left;
-      color: var(--muted);
-      font-weight:600;
-      background: rgba(255,255,255,.05);
-    }
-    tr:last-child td{border-bottom:none}
-    .day{width:74px; color:var(--text); font-weight:700}
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:3px 8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
-      font-size:12px;
-      margin-left:8px;
-      white-space:nowrap;
-    }
-    .tag.cheat{border-color: rgba(255,176,32,.35); background: rgba(255,176,32,.12); color: #ffd59a}
-    .tag.light{border-color: rgba(54,211,153,.35); background: rgba(54,211,153,.10); color: #b7ffe0}
-    .tag.core{border-color: rgba(124,92,255,.35); background: rgba(124,92,255,.12); color: #d7ccff}
-    .menu-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    @media (max-width: 780px){ .menu-grid{grid-template-columns:1fr} }
-    .menu{
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(15,23,48,.55);
-    }
-    .menu h3{
-      margin:0 0 6px 0;
-      font-size:13.5px;
-      letter-spacing:.2px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .menu .k{color:var(--muted); font-size:12px}
-    ul{margin:8px 0 0 18px; color:var(--muted)}
-    li{margin:4px 0}
-    .split{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    @media (max-width: 780px){ .split{grid-template-columns:1fr} }
-    .checklist{display:grid; gap:8px; margin-top:8px}
-    .item{
-      display:flex; align-items:flex-start; gap:10px;
-      padding:10px 10px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(15,23,48,.55);
-    }
-    input[type="checkbox"]{
-      margin-top:2px;
-      width:18px; height:18px;
-      accent-color: var(--accent);
-      cursor:pointer;
-    }
-    .item .name{font-weight:650}
-    .item .sub{color:var(--muted); font-size:12.5px}
-    .footer{
-      margin-top:14px;
-      color: var(--muted);
-      font-size:12.5px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      padding:2px 6px;
-      border-radius:8px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      font-size:12px;
-    }
-    @media print{
-      body{background:white; color:#111}
-      .wrap{max-width:none; padding:0}
-      .card{box-shadow:none}
-      button{display:none}
-      .badge{background:#fff}
-      .hint, .subtitle, .rule p, ul, .sub, th{color:#333}
-      .card, table, .menu, .rule, .item{background:#fff}
-      .tag{color:#111}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>食事×買い物 自動連動</title>
+<style>
+body{
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP";
+  background:#0b1020;
+  color:#e9ecf5;
+  margin:0;
+  padding:20px;
+}
+h1{font-size:20px;margin-bottom:10px}
+.card{
+  background:#111a33;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.1)}
+th{color:#aab3d6;text-align:left}
+button{
+  background:#7c5cff;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:8px 12px;
+  margin-right:6px;
+}
+button.alt{background:#444}
+label{display:block;margin:6px 0}
+input[type=checkbox]{transform:scale(1.2)}
+.item{display:flex;align-items:center;gap:8px}
+.item.done{text-decoration:line-through;color:#777}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="title">
-        <h1>固定メニュー & 週まとめ買い（2食＋間食）</h1>
-        <div class="subtitle">
-          起床が昼・<b>12:00 昼食 / 19〜21時 夕食 / 間食ちょこちょこ</b>というリズムを維持しつつ、<b>選択回数を最小化</b>して体重が落ちる方向に寄せる運用表。
-        </div>
-        <div class="badge-row">
-          <span class="badge"><span class="dot a"></span>迷わない：週固定</span>
-          <span class="badge"><span class="dot b"></span>手間少：レンチン/焼くだけ</span>
-          <span class="badge"><span class="dot c"></span>チート：週1〜2（“1食”）</span>
-        </div>
-      </div>
-      <div class="actions">
-        <button id="btnPrint" title="印刷（A4でも見やすい）">🖨️ 印刷/保存</button>
-        <button id="btnReset" title="チェックを全部リセット">♻️ チェックリセット</button>
-      </div>
-    </header>
 
-    <div class="grid">
-      <section class="card">
-        <div class="hd">
-          <h2>1週間メニュー（そのまま回す）</h2>
-          <span class="pill"><span class="mini"></span><strong>調整レバー</strong>：落ちない→主食を一段減らす / しんどい→戻す</span>
-        </div>
-        <div class="bd">
-          <div class="hint">※ “チート”は日ではなく<strong>夕食1回</strong>として実装（翌食から通常運転）。</div>
-          <div style="height:10px"></div>
+<h1>生活インフラ｜食事 × 買い物</h1>
 
-          <table aria-label="weekly plan">
-            <thead>
-              <tr>
-                <th class="day">曜日</th>
-                <th>12:00 昼（しっかり）</th>
-                <th>19〜21 夜（軽め寄り）</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="day">月</td><td>A <span class="tag core">満足</span></td><td>D <span class="tag light">軽め</span></td></tr>
-              <tr><td class="day">火</td><td>B <span class="tag core">満足</span></td><td>E <span class="tag light">軽め</span></td></tr>
-              <tr><td class="day">水</td><td>C <span class="tag core">満足</span></td><td>チート（外食/バーガーOK）<span class="tag cheat">チート</span></td></tr>
-              <tr><td class="day">木</td><td>A <span class="tag core">満足</span></td><td>D <span class="tag light">軽め</span></td></tr>
-              <tr><td class="day">金</td><td>B <span class="tag core">満足</span></td><td>E <span class="tag light">軽め</span></td></tr>
-              <tr><td class="day">土</td><td>C <span class="tag core">満足</span></td><td>チート（好きなものOK）<span class="tag cheat">チート</span></td></tr>
-              <tr><td class="day">日</td><td>A（またはB） <span class="tag core">満足</span></td><td>F <span class="tag light">軽め</span></td></tr>
-            </tbody>
-          </table>
+<div class="card">
+  <b>① 今週の献立チェック</b>
+  <table>
+    <tr><th>曜日</th><th>昼</th><th>夜</th><th>実行</th></tr>
+    <tr><td>月</td><td>A</td><td>D</td><td><input type="checkbox" data-day="mon"></td></tr>
+    <tr><td>火</td><td>B</td><td>E</td><td><input type="checkbox" data-day="tue"></td></tr>
+    <tr><td>水</td><td>C</td><td>チート</td><td><input type="checkbox" data-day="wed"></td></tr>
+    <tr><td>木</td><td>A</td><td>D</td><td><input type="checkbox" data-day="thu"></td></tr>
+    <tr><td>金</td><td>B</td><td>E</td><td><input type="checkbox" data-day="fri"></td></tr>
+    <tr><td>土</td><td>C</td><td>チート</td><td><input type="checkbox" data-day="sat"></td></tr>
+    <tr><td>日</td><td>A</td><td>F</td><td><input type="checkbox" data-day="sun"></td></tr>
+  </table>
+</div>
 
-          <div style="height:14px"></div>
+<div class="card">
+  <b>② 表示範囲</b><br>
+  <button onclick="setRange('today')">今日</button>
+  <button onclick="setRange('next')">今日＋明日</button>
+  <button class="alt" onclick="setRange('week')">今週残り</button>
+</div>
 
-          <div class="menu-grid">
-            <div class="menu">
-              <h3>A：ごはん＋魚 <span class="k">昼</span></h3>
-              <div class="hint">ごはん 100〜150g + 焼き魚（鮭/鯖） + 袋サラダ + みそ汁</div>
-              <ul>
-                <li>魚は切身でも冷凍でもOK</li>
-                <li>主食は“体重の落ち”で100↔150gを調整</li>
-              </ul>
-            </div>
-            <div class="menu">
-              <h3>B：そば＋温玉 <span class="k">昼</span></h3>
-              <div class="hint">そば + 温玉 + わかめ/オクラ（冷凍OK） + サラダ</div>
-              <ul>
-                <li>めんつゆで爆速</li>
-                <li>腹持ちが弱い日はツナを足す</li>
-              </ul>
-            </div>
-            <div class="menu">
-              <h3>C：卵＋納豆 <span class="k">昼</span></h3>
-              <div class="hint">卵2個（ゆで/目玉） + 納豆 + ごはん100g + みそ汁</div>
-              <ul>
-                <li>いちばんコスパ良くて強い</li>
-                <li>飽きたらキムチ/海苔で味変</li>
-              </ul>
-            </div>
-            <div class="menu">
-              <h3>D：鍋 <span class="k">夜</span></h3>
-              <div class="hint">豚しゃぶ or 鶏 + 白菜/キャベツ + きのこ + 豆腐（ポン酢/ごま）</div>
-              <ul>
-                <li>“食欲が暴れる日”ほど鍋が勝つ</li>
-                <li>野菜量で満足度を稼ぐ</li>
-              </ul>
-            </div>
-            <div class="menu">
-              <h3>E：鶏＋もやし <span class="k">夜</span></h3>
-              <div class="hint">鶏（塩こしょう焼き） + もやし炒め + スープ</div>
-              <ul>
-                <li>油は最小（焦げない程度）</li>
-                <li>にんにく/しょうがチューブで“うまさ”足し</li>
-              </ul>
-            </div>
-            <div class="menu">
-              <h3>F：豆腐どーん <span class="k">夜</span></h3>
-              <div class="hint">豆腐 + ツナ or キムチ + 温玉 + 野菜（袋サラダ/ブロッコリー）</div>
-              <ul>
-                <li>包丁いらずで強い</li>
-                <li>夜の主食は控えめに寄せやすい</li>
-              </ul>
-            </div>
-          </div>
-
-          <div style="height:14px"></div>
-
-          <div class="card" style="box-shadow:none; background:transparent; border:none;">
-            <div class="hd" style="border:1px solid var(--line); border-radius: 16px; background: linear-gradient(90deg, rgba(255,176,32,.12), rgba(124,92,255,.08));">
-              <h2>間食（1日“1枠”）</h2>
-              <span class="pill warn"><span class="mini"></span><strong>箱ルール</strong>：毎日これだけOK</span>
-            </div>
-            <div class="bd" style="padding:12px 2px 0 2px">
-              <div class="rule-list">
-                <div class="rule">
-                  <b>候補（どれか1つ）</b>
-                  <p>ギリシャヨーグルト / 小袋ナッツ / 高カカオチョコ（決めた個数） / プロテイン</p>
-                </div>
-                <div class="rule">
-                  <b>コツ</b>
-                  <p>“ちょこちょこ”は枠の中でOK。枠を超えたら翌日へ持ち越し。</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <aside class="card">
-        <div class="hd">
-          <h2>ルール（事故防止：超シンプル）</h2>
-          <span class="pill bad"><span class="mini"></span><strong>禁止</strong>：セット/甘い飲み物</span>
-        </div>
-        <div class="bd">
-          <div class="rule-list">
-            <div class="rule">
-              <b>チートは週1〜2回</b>
-              <p>“夕食1回”として解禁。翌食から通常運転。</p>
-            </div>
-            <div class="rule">
-              <b>バーガーの最適解</b>
-              <p>単品＋水/お茶。セット（ポテト＋甘い飲み物）は封印。</p>
-            </div>
-            <div class="rule">
-              <b>外食は定食を選ぶ</b>
-              <p>焼き魚/生姜焼き系。ごはんは少なめに寄せる。</p>
-            </div>
-            <div class="rule">
-              <b>デリバリーは週1</b>
-              <p>カテゴリ固定（寿司/刺身/そば/フォー/サラダ系）。</p>
-            </div>
-          </div>
-
-          <div style="height:14px"></div>
-
-          <div class="hd" style="border-radius: 16px; border:1px solid var(--line); background: linear-gradient(90deg, rgba(54,211,153,.10), rgba(124,92,255,.08));">
-            <h2>週まとめ買い（チェック式）</h2>
-            <span class="pill"><span class="mini"></span><strong>週2回</strong>：ネット＋ロピア</span>
-          </div>
-
-          <div class="split">
-            <div>
-              <div class="hint" style="margin-top:8px"><b>ネットスーパー（重い/定番）</b></div>
-              <div class="checklist" id="listNet"></div>
-            </div>
-            <div>
-              <div class="hint" style="margin-top:8px"><b>ロピア（肉・魚・野菜）</b></div>
-              <div class="checklist" id="listLopia"></div>
-            </div>
-          </div>
-
-          <div style="height:14px"></div>
-
-          <div class="hd" style="border-radius: 16px; border:1px solid var(--line); background: linear-gradient(90deg, rgba(124,92,255,.10), rgba(255,176,32,.08));">
-            <h2>“調整レバー”の使い方</h2>
-            <span class="pill"><span class="mini"></span><strong>2週間</strong>で判断</span>
-          </div>
-          <div class="bd" style="padding:12px 2px 0 2px">
-            <div class="rule-list">
-              <div class="rule">
-                <b>落ちない</b>
-                <p>主食を一段減らす（例：ごはん150g→100g→0）。</p>
-              </div>
-              <div class="rule">
-                <b>空腹がしんどい</b>
-                <p>鍋/野菜/スープを増やす。主食は“戻しすぎない”。</p>
-              </div>
-              <div class="rule">
-                <b>落ちすぎてつらい</b>
-                <p>昼の主食を少し戻す（+50gなど）か、間食枠を“高タンパク”へ。</p>
-              </div>
-              <div class="rule">
-                <b>体重は平均で見る</b>
-                <p>日々の上下ではなく、2週間平均で判断（むくみでブレる）。</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="footer">
-            <span>保存のコツ：このページをブックマーク。買い物チェックはブラウザに保存されます。</span>
-            <span>ショートカット：<span class="kbd">Ctrl</span> + <span class="kbd">P</span>（印刷/保存）</span>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </div>
+<div class="card">
+  <b>③ 必要な買い物</b>
+  <div id="shopping"></div>
+</div>
 
 <script>
-  const netItems = [
-    {k:"frozen_broccoli", name:"冷凍ブロッコリー", sub:"夜の野菜・最強"},
-    {k:"frozen_okra", name:"冷凍オクラ/わかめ", sub:"そば・みそ汁の底上げ"},
-    {k:"frozen_berries", name:"冷凍ベリー", sub:"ヨーグルト用"},
-    {k:"greek_yogurt", name:"ギリシャヨーグルト/無糖ヨーグルト", sub:"間食1枠の本命"},
-    {k:"eggs", name:"卵（10個）", sub:"ゆで卵を作ると勝率が上がる"},
-    {k:"natto", name:"納豆", sub:"昼C用"},
-    {k:"tofu", name:"豆腐", sub:"夜F・鍋にも"},
-    {k:"miso", name:"味噌/即席みそ汁", sub:"汁物で満足度UP"},
-    {k:"rice", name:"米 or パックごはん", sub:"主食レバー"},
-    {k:"soba", name:"そば", sub:"昼B用"},
-    {k:"mentsuyu", name:"めんつゆ", sub:"爆速調理"},
-    {k:"ponzu", name:"ポン酢/ごまだれ", sub:"鍋の味変"},
-  ];
+/* 献立定義 */
+const meals = {
+  A:["米","鮭","サラダ","味噌"],
+  B:["そば","卵","わかめ"],
+  C:["卵","納豆","米"],
+  D:["豚肉","白菜","きのこ","豆腐"],
+  E:["鶏肉","もやし"],
+  F:["豆腐","ツナ","キムチ"]
+};
 
-  const lopiaItems = [
-    {k:"chicken", name:"鶏むね/もも（1〜2kg）", sub:"E・鍋の主役"},
-    {k:"pork", name:"豚しゃぶ（600〜900g）", sub:"鍋用"},
-    {k:"salmon_mackerel", name:"鮭/鯖 切身（4〜6切）", sub:"昼A用"},
-    {k:"salad_bag", name:"袋サラダ（3〜5袋）", sub:"切る手間ゼロ"},
-    {k:"cabbage_napa", name:"キャベツ/白菜", sub:"鍋・副菜"},
-    {k:"mushrooms", name:"きのこ（えのき/しめじ等）", sub:"鍋・炒め物"},
-    {k:"bean_sprouts", name:"もやし（3袋）", sub:"Eの相棒"},
-    {k:"kimchi", name:"キムチ", sub:"味変・Fにも"},
-    {k:"tuna_cans", name:"ツナ缶/鯖缶", sub:"F・昼Bの足し"},
-  ];
+const plan = {
+  mon:["A","D"],
+  tue:["B","E"],
+  wed:["C"],
+  thu:["A","D"],
+  fri:["B","E"],
+  sat:["C"],
+  sun:["A","F"]
+};
 
-  function loadState(key){
-    try { return JSON.parse(localStorage.getItem(key) || "{}"); } catch(e){ return {}; }
-  }
-  function saveState(key, obj){
-    localStorage.setItem(key, JSON.stringify(obj));
-  }
+let range = "week";
 
-  function renderList(elId, items, storeKey){
-    const el = document.getElementById(elId);
-    const state = loadState(storeKey);
-    el.innerHTML = "";
-    items.forEach(it=>{
-      const row = document.createElement("label");
-      row.className = "item";
-      row.innerHTML = `
-        <input type="checkbox" data-key="${it.k}" ${state[it.k] ? "checked" : ""}/>
-        <div>
-          <div class="name">${it.name}</div>
-          <div class="sub">${it.sub}</div>
-        </div>
-      `;
-      el.appendChild(row);
-    });
+/* 保存 */
+const state = JSON.parse(localStorage.getItem("diet_state")||"{}");
 
-    el.addEventListener("change", (e)=>{
-      if(e.target && e.target.matches('input[type="checkbox"]')){
-        const k = e.target.getAttribute("data-key");
-        const st = loadState(storeKey);
-        st[k] = e.target.checked;
-        saveState(storeKey, st);
-      }
-    });
-  }
+/* 初期反映 */
+document.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+  cb.checked = state[cb.dataset.day]||false;
+  cb.onchange = ()=>{
+    state[cb.dataset.day]=cb.checked;
+    save();
+  };
+});
 
-  renderList("listNet", netItems, "diet_net");
-  renderList("listLopia", lopiaItems, "diet_lopia");
+function setRange(r){
+  range=r;
+  render();
+}
 
-  document.getElementById("btnPrint").addEventListener("click", ()=>window.print());
-  document.getElementById("btnReset").addEventListener("click", ()=>{
-    if(!confirm("買い物チェックを全部リセットします。OK？")) return;
-    localStorage.removeItem("diet_net");
-    localStorage.removeItem("diet_lopia");
-    renderList("listNet", netItems, "diet_net");
-    renderList("listLopia", lopiaItems, "diet_lopia");
+function save(){
+  localStorage.setItem("diet_state",JSON.stringify(state));
+  render();
+}
+
+function render(){
+  const days = Object.keys(plan);
+  const todayIndex = new Date().getDay()-1;
+  const activeDays = days.filter((d,i)=>{
+    if(!state[d]) return false;
+    if(range==="today") return i===todayIndex;
+    if(range==="next") return i===todayIndex||i===todayIndex+1;
+    return i>=todayIndex;
   });
+
+  const items = new Set();
+  activeDays.forEach(d=>{
+    plan[d].forEach(m=>{
+      if(meals[m]) meals[m].forEach(i=>items.add(i));
+    });
+  });
+
+  const el=document.getElementById("shopping");
+  el.innerHTML="";
+  if(items.size===0){
+    el.textContent="チェックされた日がありません";
+    return;
+  }
+  items.forEach(i=>{
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML=`<input type="checkbox"> ${i}`;
+    el.appendChild(div);
+  });
+}
+
+render();
 </script>
+
 </body>
 </html>
