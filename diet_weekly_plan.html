@@ -21,21 +21,28 @@ h2{font-size:18px;margin:22px 0 8px}
   padding:14px;
   margin-bottom:16px;
 }
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{
-  padding:6px 12px;border-radius:10px;
-  background:#0b1020;border:1px solid #333;
-  cursor:pointer;font-size:13px
-}
-.tab.active{background:#2a2f55}
 table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.1)}
+th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 th{color:#aab3d6}
+input[type=checkbox]{transform:scale(1.2);margin-right:6px}
 .menu{color:#d7ccff;font-size:13px}
 .cheat{color:#ffb020;font-size:13px}
-.small{font-size:12px;color:#aab3d6}
-.nocook{margin-left:6px;font-size:12px}
-details summary{cursor:pointer;color:#ffd966;font-weight:600}
+.muted{color:#aab3d6;font-size:13px}
+select{
+  background:#0b1020;color:#e9ecf5;border:1px solid #333;
+  border-radius:10px;padding:6px 10px;
+}
+details summary{
+  cursor:pointer;
+  color:#ffd966;
+  font-weight:600;
+  margin-bottom:6px;
+}
+.recipe{margin:8px 0 14px}
+.toggle{
+  display:flex;align-items:center;gap:8px;margin-top:6px
+}
+.small{font-size:13px}
 </style>
 </head>
 
@@ -43,14 +50,7 @@ details summary{cursor:pointer;color:#ffd966;font-weight:600}
 
 <h1>生活インフラ｜食事 × 買い物</h1>
 
-<div class="tabs">
-  <div class="tab active" data-tab="rotations">ローテ</div>
-  <div class="tab" data-tab="nocook">作らない・外食</div>
-</div>
-
-<!-- ========== ローテ画面 ========== -->
-<div id="rotations">
-
+<!-- ローテ切替 -->
 <div class="card">
 <b>ローテ切替</b><br>
 <select id="rotationSelect">
@@ -58,8 +58,13 @@ details summary{cursor:pointer;color:#ffd966;font-weight:600}
   <option value="2">ローテ2（洋・中）</option>
   <option value="3">ローテ3（変化球）</option>
 </select>
+
+<div class="toggle small">
+  <label><input type="checkbox" id="lazyToggle"> 今日、作る気ない日</label>
+</div>
 </div>
 
+<!-- 毎食チェック -->
 <h2>① 毎食チェック</h2>
 <div class="card">
 <table id="mealTable">
@@ -67,165 +72,153 @@ details summary{cursor:pointer;color:#ffd966;font-weight:600}
 </table>
 </div>
 
+<!-- 買い物 -->
 <h2>② 必要な買い物</h2>
-<div class="card" id="shopping"></div>
+<div class="card" id="shopping"><div class="muted">チェックされた食事から自動生成</div></div>
 
+<!-- レシピ -->
 <h2>③ レシピメモ</h2>
-<div class="card" id="recipes"></div>
+<div class="card muted" id="recipes"></div>
 
+<!-- カロリー -->
 <h2>④ カロリー参考</h2>
-<div class="card">
+<div class="card muted">
 <details>
-<summary>目安を確認する</summary>
+<summary>目安を確認する（管理用ではありません）</summary>
 <br>
-<b>昼</b>：450〜600kcal<br>
-<b>夜</b>：350〜450kcal<br>
-<b>間食</b>：150〜250kcal<br>
-<b>合計</b>：1,400〜1,700kcal
+<b>昼（12時｜しっかり）</b><br>
+ごはん100〜150g：170〜250kcal<br>
+主菜（魚 / 卵2個 / 納豆）：200〜300kcal<br>
+野菜・みそ汁：50〜100kcal<br>
+👉 約450〜600kcal<br><br>
+
+<b>夜（19〜21時｜軽め寄り）</b><br>
+鶏 / 豚 / 豆腐中心：250〜350kcal<br>
+野菜たっぷり：50〜100kcal<br>
+主食ほぼ無し or 少量<br>
+👉 約350〜450kcal<br><br>
+
+<b>間食（1日1枠）</b><br>
+ヨーグルト / ナッツ / プロテイン等：150〜250kcal<br><br>
+
+<b>合計（通常日）</b><br>
+約1,400〜1,700kcal（平均1,550kcal前後）
 </details>
 </div>
 
-</div>
-
-<!-- ========== 作らない・外食 ========== -->
-<div id="nocook" style="display:none">
-
-<div class="card">
-<b>作らない代案（昼）</b><br>
-・サラダチキン＋おにぎり<br>
-・ゆで卵＋パン＋ヨーグルト<br>
-・プロテイン＋バナナ
-</div>
-
-<div class="card">
-<b>作らない代案（夜）</b><br>
-・刺身パック＋味噌汁<br>
-・冷凍鍋／冷凍スープ<br>
-・豆腐＋キムチ＋卵
-</div>
-
+<!-- 外食 -->
+<h2>⑤ 外食OK早見表</h2>
 <div class="card small">
-<b>外食OK早見表</b><br><br>
-<b>ガスト</b>：チキンステーキ、和風ハンバーグ、焼き魚定食（ごはん少）<br>
-<b>すき家</b>：牛丼ライト、牛皿定食、鮭定食<br>
-<b>松屋</b>：牛焼肉定食、豚しゃぶ系<br>
-<b>バーミヤン</b>：青椒肉絲・回鍋肉（単品）<br>
-<b>マクドナルド</b>：チキン系／フィレオフィッシュ（単品）<br>
-<b>モス</b>：モス野菜、フィッシュ、モスチキン追加OK<br>
-<b>スタバ</b>：ドリップ、ソイラテ（ショート）
-</div>
+<b>共通ルール</b>：主食少なめ / セット禁止 / 飲み物は水・お茶<br><br>
 
+<b>ガスト</b>：チキンステーキ、和風ハンバーグ、焼き魚定食（ごはん少）<br>
+<b>すき家</b>：牛丼ライト、牛皿定食、鮭定食（ごはん少）<br>
+<b>松屋</b>：牛焼肉定食、豚しゃぶ系（ごはん少）<br>
+<b>バーミヤン</b>：青椒肉絲・回鍋肉（単品）、野菜タンメン（麺残しOK）<br>
+<b>マクドナルド</b>：チキン系 / フィレオフィッシュ（単品）<br>
+<b>モス</b>：モス野菜・フィッシュ（単品）、モスチキン追加OK<br>
+<b>スタバ</b>：ドリップ、ソイラテ（ショート）、プロテイン系フード
 </div>
 
 <script>
-/* ========= データ ========= */
+/* ===== データ ===== */
 
 const rotations={
-1:{A:"焼き魚定食",B:"そば温玉",C:"親子丼ライト",D:"豚しゃぶ野菜",E:"鶏照り焼き",F:"冷奴"},
-2:{A:"サバ缶定食",B:"卵トースト",C:"冷やしうどん鶏",D:"麻婆豆腐",E:"ハンバーグ",F:"野菜スープ"},
-3:{A:"ツナ卵サンド",B:"鶏そぼろ丼",C:"サバ缶茶漬け",D:"豆腐ハンバーグ",E:"豚しゃぶ梅",F:"キムチスープ"}
+1:{menus:{
+A:{name:"焼き魚定食",items:["米","魚","サラダ","味噌"],recipe:"魚を焼く。ごはん100〜150g＋サラダ＋みそ汁。"},
+B:{name:"そば温玉",items:["そば","卵","わかめ"],recipe:"そばを茹で、温玉とわかめをのせる。"},
+C:{name:"親子丼ライト",items:["米","鶏肉","卵"],recipe:"鶏と卵を軽く煮て、ごはん100gにのせる。"},
+D:{name:"豚しゃぶ野菜",items:["豚肉","野菜"],recipe:"豚を茹でて野菜と。ポン酢で。"},
+E:{name:"鶏照り焼き",items:["鶏肉"],recipe:"鶏を焼いて味付け。主食なし。"},
+F:{name:"冷奴＋副菜",items:["豆腐","キムチ"],recipe:"豆腐にキムチや薬味をのせる。"}
+}},
+2:{menus:{
+A:{name:"サバ缶定食",items:["米","サバ缶","サラダ"],recipe:"サバ缶＋ごはん＋サラダ。"},
+B:{name:"卵トースト",items:["パン","卵"],recipe:"トーストに卵料理をのせる。"},
+C:{name:"冷やしうどん鶏",items:["うどん","鶏肉","卵"],recipe:"うどんに蒸し鶏と温玉。"},
+D:{name:"麻婆豆腐",items:["豆腐","ひき肉"],recipe:"麻婆豆腐。主食なし。"},
+E:{name:"ハンバーグ",items:["ひき肉","豆腐"],recipe:"豆腐入りハンバーグ。"},
+F:{name:"野菜スープ",items:["野菜","ソーセージ"],recipe:"野菜多めのスープ。"}
+}},
+3:{menus:{
+A:{name:"ツナ卵サンド",items:["パン","ツナ","卵"],recipe:"ツナと卵を和えてパンに挟む。"},
+B:{name:"鶏そぼろ丼",items:["米","鶏ひき肉","卵"],recipe:"そぼろと卵をごはん100gに。"},
+C:{name:"サバ缶茶漬け",items:["サバ缶","米"],recipe:"サバ缶＋だしで茶漬け。"},
+D:{name:"豆腐ハンバーグ",items:["豆腐","ひき肉"],recipe:"豆腐ハンバーグ。"},
+E:{name:"豚しゃぶ梅",items:["豚肉","梅"],recipe:"豚しゃぶに梅だれ。"},
+F:{name:"キムチスープ",items:["キムチ","豆腐","卵"],recipe:"キムチスープ。"}
+}}
 };
 
-const noCook={
-lunch:[
-  {name:"サラダチキン＋おにぎり",items:["サラダチキン","おにぎり"]},
-  {name:"卵＋パン＋ヨーグルト",items:["卵","パン","ヨーグルト"]},
-  {name:"プロテイン＋バナナ",items:["プロテイン","バナナ"]}
-],
-dinner:[
-  {name:"刺身＋味噌汁",items:["刺身","味噌"]},
-  {name:"冷凍鍋／スープ",items:["冷凍鍋"]},
-  {name:"豆腐＋キムチ＋卵",items:["豆腐","キムチ","卵"]}
-]
+const lazyDay={
+lunch:{name:"作らない昼",items:["サラダチキン","おにぎり","ヨーグルト"],recipe:"買うだけ。"},
+dinner:{name:"作らない夜",items:["刺身","味噌汁","豆腐"],recipe:"切らない・火を使わない。"}
 };
 
-const week={mon:["A","D"],tue:["B","E"],wed:["C",null],thu:["A","D"],fri:["B","E"],sat:["C",null],sun:["A","F"]};
+const weekPlan={mon:["A","D"],tue:["B","E"],wed:["C",null],thu:["A","D"],fri:["B","E"],sat:["C",null],sun:["A","F"]};
 
-const state=JSON.parse(localStorage.getItem("state")||"{}");
+const state=JSON.parse(localStorage.getItem("meal_state")||"{}");
 let rotation=localStorage.getItem("rotation")||"1";
+let lazy=localStorage.getItem("lazy")==="true";
 
-/* ========= タブ ========= */
-document.querySelectorAll(".tab").forEach(t=>{
-t.onclick=()=>{
-document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-t.classList.add("active");
-document.getElementById("rotations").style.display=t.dataset.tab==="rotations"?"block":"none";
-document.getElementById("nocook").style.display=t.dataset.tab==="nocook"?"block":"none";
-};
-});
-
-/* ========= 描画 ========= */
 document.getElementById("rotationSelect").value=rotation;
+document.getElementById("lazyToggle").checked=lazy;
+
 document.getElementById("rotationSelect").onchange=e=>{
 rotation=e.target.value;localStorage.setItem("rotation",rotation);render();
+};
+document.getElementById("lazyToggle").onchange=e=>{
+lazy=e.target.checked;localStorage.setItem("lazy",lazy);render();
 };
 
 function render(){
 const table=document.getElementById("mealTable");
 table.innerHTML="<tr><th>曜日</th><th>昼</th><th>夜</th></tr>";
-Object.entries(week).forEach(([d,[l,n]])=>{
+Object.entries(weekPlan).forEach(([day,[l,d]])=>{
 table.innerHTML+=`
 <tr>
-<td>${d}</td>
-<td>${l?cell(d,"lunch",l):""}</td>
-<td>${n?cell(d,"dinner",n):"<span class='cheat'>チート</span>"}</td>
+<td>${day}</td>
+<td>${l?`<label><input type="checkbox" data-key="${day}_lunch"><span class="menu">${lazy?lazyDay.lunch.name:rotations[rotation].menus[l].name}</span></label>`:""}</td>
+<td>${d?`<label><input type="checkbox" data-key="${day}_dinner"><span class="menu">${lazy?lazyDay.dinner.name:rotations[rotation].menus[d].name}</span></label>`:`<span class="cheat">チート</span>`}</td>
 </tr>`;
+});
+document.querySelectorAll("input").forEach(cb=>{
+if(cb.dataset.key){
+cb.checked=state[cb.dataset.key]||false;
+cb.onchange=()=>{state[cb.dataset.key]=cb.checked;localStorage.setItem("meal_state",JSON.stringify(state));renderShopping();};
+}
 });
 renderShopping();renderRecipes();
 }
 
-function cell(day,time,code){
-const key=`${day}_${time}`;
-const noc=state[key]?.nocook;
-const label=noc?noCook[time][state[key].alt].name:rotations[rotation][code];
-return `
-<label>
-<input type="checkbox" ${state[key]?.done?"checked":""}
- onchange="toggleDone('${key}',this.checked)">
-<span class="menu">${label}</span>
-</label>
-<label class="nocook">
-<input type="checkbox" ${noc?"checked":""}
- onchange="toggleNoCook('${key}',this.checked)">🅽
-</label>
-${noc?altSelect(key,time):""}
-`;
-}
-
-function altSelect(key,time){
-return `<br>
-<select onchange="setAlt('${key}',this.value)">
-${noCook[time].map((a,i)=>`<option value="${i}" ${state[key]?.alt==i?"selected":""}>${a.name}</option>`).join("")}
-</select>`;
-}
-
-function toggleDone(k,v){
-state[k]=state[k]||{};state[k].done=v;save();
-}
-function toggleNoCook(k,v){
-state[k]=state[k]||{};state[k].nocook=v;
-if(v && state[k].alt==null) state[k].alt=0;
-save();
-}
-function setAlt(k,v){state[k].alt=Number(v);save();}
-function save(){localStorage.setItem("state",JSON.stringify(state));render();}
-
 function renderShopping(){
 const set=new Set();
 Object.entries(state).forEach(([k,v])=>{
-if(v.done){
-const [d,t]=k.split("_");
-if(v.nocook){
-noCook[t][v.alt].items.forEach(i=>set.add(i));
+if(v){
+const [day,time]=k.split("_");
+if(lazy){
+lazyDay[time].items.forEach(i=>set.add(i));
+}else{
+const code=weekPlan[day]?.[time==="lunch"?0:1];
+if(code) rotations[rotation].menus[code].items.forEach(i=>set.add(i));
 }
 }
 });
-document.getElementById("shopping").innerHTML=
-set.size?Array.from(set).map(i=>`<div>${i}</div>`).join(""):"<span class='small'>未チェック</span>";
+const el=document.getElementById("shopping");
+el.innerHTML=set.size?Array.from(set).map(i=>`<div>${i}</div>`).join(""):"<div class='muted'>未チェック</div>";
 }
 
 function renderRecipes(){
-document.getElementById("recipes").innerHTML="<span class='small'>必要なときだけ確認</span>";
+const el=document.getElementById("recipes");
+el.innerHTML="";
+if(lazy){
+el.innerHTML+=`<div class="recipe"><b>${lazyDay.lunch.name}</b><br>${lazyDay.lunch.recipe}</div>`;
+el.innerHTML+=`<div class="recipe"><b>${lazyDay.dinner.name}</b><br>${lazyDay.dinner.recipe}</div>`;
+return;
+}
+Object.values(rotations[rotation].menus).forEach(m=>{
+el.innerHTML+=`<details class="recipe"><summary>${m.name}</summary>${m.recipe}</details>`;
+});
 }
 
 render();
