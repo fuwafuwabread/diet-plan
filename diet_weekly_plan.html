@@ -28,7 +28,7 @@ th{color:#aab3d6}
 }
 .tab.active{background:#2a2f55}
 
-/* ===== No-Cook Pill ===== */
+/* No-cook pill */
 .nocook-pill{
   display:inline-flex;align-items:center;
   margin-left:8px;padding:2px 10px;
@@ -77,7 +77,10 @@ details summary{cursor:pointer;color:#ffd966;font-weight:600}
 <h2>② 必要な買い物</h2>
 <div class="card" id="shopping"><span class="small">未チェック</span></div>
 
-<h2>③ カロリー参考</h2>
+<h2>③ レシピ（最低限）</h2>
+<div class="card" id="recipes"></div>
+
+<h2>④ カロリー参考</h2>
 <div class="card">
 <details>
 <summary>目安を見る</summary>
@@ -119,34 +122,60 @@ details summary{cursor:pointer;color:#ffd966;font-weight:600}
 </div>
 
 <script>
-/* ===== データ ===== */
+/* ===== メニュー ===== */
 const rotations={
 1:{A:"焼き魚定食",B:"そば温玉",C:"親子丼ライト",D:"豚しゃぶ野菜",E:"鶏照り焼き",F:"冷奴"},
 2:{A:"サバ缶定食",B:"卵トースト",C:"冷やしうどん鶏",D:"麻婆豆腐",E:"ハンバーグ",F:"野菜スープ"},
 3:{A:"ツナ卵サンド",B:"鶏そぼろ丼",C:"サバ缶茶漬け",D:"豆腐ハンバーグ",E:"豚しゃぶ梅",F:"キムチスープ"}
 };
 
+/* ===== 買い物として成立する材料 ===== */
 const normalItems={
 "焼き魚定食":["魚","米","味噌"],
 "そば温玉":["そば","卵"],
-"親子丼ライト":["鶏肉","卵","米"],
+"親子丼ライト":["鶏肉","卵","玉ねぎ","米"],
 "豚しゃぶ野菜":["豚肉","白菜","きのこ"],
 "鶏照り焼き":["鶏肉"],
 "冷奴":["豆腐"],
-"サバ缶定食":["サバ缶","米"],
+
+"サバ缶定食":["サバ缶","米","味噌"],
 "卵トースト":["卵","パン"],
 "冷やしうどん鶏":["うどん","鶏肉"],
-"麻婆豆腐":["豆腐","ひき肉"],
-"ハンバーグ":["ひき肉"],
-"野菜スープ":["野菜"],
+"麻婆豆腐":["豆腐","ひき肉","麻婆豆腐の素"],
+"ハンバーグ":["合い挽き肉","玉ねぎ","卵","パン粉"],
+"野菜スープ":["野菜","コンソメ"],
+
 "ツナ卵サンド":["ツナ","卵","パン"],
 "鶏そぼろ丼":["鶏ひき肉","卵","米"],
-"サバ缶茶漬け":["サバ缶","米"],
-"豆腐ハンバーグ":["豆腐","ひき肉"],
-"豚しゃぶ梅":["豚肉"],
-"キムチスープ":["キムチ"]
+"サバ缶茶漬け":["サバ缶","米","だし"],
+"豆腐ハンバーグ":["豆腐","ひき肉","卵"],
+"豚しゃぶ梅":["豚肉","梅"],
+"キムチスープ":["キムチ","卵"]
 };
 
+/* ===== レシピ（表示用） ===== */
+const recipes={
+"ハンバーグ":"合い挽き肉・玉ねぎ・卵・パン粉を混ぜて焼く（市販でもOK）。",
+"親子丼ライト":"鶏肉と玉ねぎをめんつゆで煮て卵でとじる。",
+"麻婆豆腐":"豆腐とひき肉を炒め、市販の素で仕上げる。",
+"焼き魚定食":"魚を焼き、ごはんと味噌汁。",
+"そば温玉":"茹でそばにめんつゆ＋温玉。",
+"豚しゃぶ野菜":"豚を茹で、野菜とポン酢。",
+"鶏照り焼き":"鶏を焼き、醤油・みりん少量。",
+"冷奴":"豆腐に醤油。",
+"サバ缶定食":"サバ缶＋ごはん＋味噌汁。",
+"卵トースト":"卵焼きをパンにのせる。",
+"冷やしうどん鶏":"うどん＋サラダチキン。",
+"野菜スープ":"野菜とコンソメ。",
+"ツナ卵サンド":"ツナと卵をパンに挟む。",
+"鶏そぼろ丼":"鶏ひき肉と卵そぼろ。",
+"サバ缶茶漬け":"サバ缶＋ごはん＋だし。",
+"豆腐ハンバーグ":"豆腐とひき肉を焼く。",
+"豚しゃぶ梅":"豚しゃぶ＋梅。",
+"キムチスープ":"キムチと卵のスープ。"
+};
+
+/* ===== 🅽代案 ===== */
 const noCook={
 lunch:[
 {name:"サラダチキン＋おにぎり",items:["サラダチキン","おにぎり"]},
@@ -160,10 +189,7 @@ dinner:[
 ]
 };
 
-const week={
-mon:["A","D"],tue:["B","E"],wed:["C",null],
-thu:["A","D"],fri:["B","E"],sat:["C",null],sun:["A","F"]
-};
+const week={mon:["A","D"],tue:["B","E"],wed:["C",null],thu:["A","D"],fri:["B","E"],sat:["C",null],sun:["A","F"]};
 
 const state=JSON.parse(localStorage.getItem("state")||"{}");
 let rotation=localStorage.getItem("rotation")||"1";
@@ -196,6 +222,7 @@ t.innerHTML+=`
 </tr>`;
 });
 renderShopping();
+renderRecipes();
 }
 
 function cell(day,time,code){
@@ -249,6 +276,13 @@ const menu=rotations[rotation][code];
 });
 document.getElementById("shopping").innerHTML=
 set.size?Array.from(set).map(i=>`<div>${i}</div>`).join(""):"<span class='small'>未チェック</span>";
+}
+
+function renderRecipes(){
+document.getElementById("recipes").innerHTML =
+Object.entries(recipes).map(([k,v])=>`
+<details><summary>${k}</summary><div class="small">${v}</div></details>
+`).join("");
 }
 
 render();
