@@ -77,10 +77,7 @@ details summary{cursor:pointer;color:#ffd966;font-weight:600}
 <h2>② 必要な買い物</h2>
 <div class="card" id="shopping"><span class="small">未チェック</span></div>
 
-<h2>③ レシピメモ</h2>
-<div class="card small">通常時は見なくてOK（作らない時は代案を見る）</div>
-
-<h2>④ カロリー参考</h2>
+<h2>③ カロリー参考</h2>
 <div class="card">
 <details>
 <summary>目安を見る</summary>
@@ -129,104 +126,18 @@ const rotations={
 3:{A:"ツナ卵サンド",B:"鶏そぼろ丼",C:"サバ缶茶漬け",D:"豆腐ハンバーグ",E:"豚しゃぶ梅",F:"キムチスープ"}
 };
 
-const noCook={
-lunch:[
-{name:"サラダチキン＋おにぎり",items:["サラダチキン","おにぎり"]},
-{name:"卵＋パン＋ヨーグルト",items:["卵","パン","ヨーグルト"]},
-{name:"プロテイン＋バナナ",items:["プロテイン","バナナ"]}
-],
-dinner:[
-{name:"刺身＋味噌汁",items:["刺身","味噌"]},
-{name:"冷凍鍋／スープ",items:["冷凍鍋"]},
-{name:"豆腐＋キムチ＋卵",items:["豆腐","キムチ","卵"]}
-]
-};
-
-const week={mon:["A","D"],tue:["B","E"],wed:["C",null],thu:["A","D"],fri:["B","E"],sat:["C",null],sun:["A","F"]};
-const state=JSON.parse(localStorage.getItem("state")||"{}");
-let rotation=localStorage.getItem("rotation")||"1";
-
-/* ===== タブ ===== */
-document.querySelectorAll(".tab").forEach(t=>{
-t.onclick=()=>{
-document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-t.classList.add("active");
-document.getElementById("rot").style.display=t.dataset.tab==="rot"?"block":"none";
-document.getElementById("noc").style.display=t.dataset.tab==="noc"?"block":"none";
-};
-});
-
-/* ===== 描画 ===== */
-document.getElementById("rotation").value=rotation;
-document.getElementById("rotation").onchange=e=>{
-rotation=e.target.value;localStorage.setItem("rotation",rotation);render();
-};
-
-function render(){
-const t=document.getElementById("mealTable");
-t.innerHTML="<tr><th>曜日</th><th>昼</th><th>夜</th></tr>";
-Object.entries(week).forEach(([d,[l,n]])=>{
-t.innerHTML+=`
-<tr>
-<td>${d}</td>
-<td>${l?cell(d,"lunch",l):""}</td>
-<td>${n?cell(d,"dinner",n):"<span class='cheat'>チート</span>"}</td>
-</tr>`;
-});
-renderShopping();
-}
-
-function cell(day,time,code){
-const key=`${day}_${time}`;
-state[key]=state[key]||{};
-const isNo=state[key].nocook;
-const label=isNo?noCook[time][state[key].alt||0].name:rotations[rotation][code];
-return `
-<label>
-<input type="checkbox" ${state[key].done?"checked":""}
- onchange="toggleDone('${key}',this.checked)">
-<span class="menu">${label}</span>
-</label>
-<span class="nocook-pill ${isNo?"on":"off"}"
- onclick="toggleNoCook('${key}')">
-つくらない
-</span>
-${isNo?altSelect(key,time):""}
-`;
-}
-
-function altSelect(key,time){
-return `<div style="margin-top:6px">
-<select onchange="setAlt('${key}',this.value)">
-${noCook[time].map((a,i)=>`
-<option value="${i}" ${state[key].alt==i?"selected":""}>${a.name}</option>
-`).join("")}
-</select>
-</div>`;
-}
-
-function toggleDone(k,v){state[k].done=v;save();}
-function toggleNoCook(k){
-state[k].nocook=!state[k].nocook;
-if(state[k].nocook && state[k].alt==null) state[k].alt=0;
-save();
-}
-function setAlt(k,v){state[k].alt=Number(v);save();}
-function save(){localStorage.setItem("state",JSON.stringify(state));render();}
-
-function renderShopping(){
-const set=new Set();
-Object.values(state).forEach(v=>{
-if(v.done && v.nocook){
-noCook[v.time||"lunch"]?.[v.alt]?.items?.forEach(i=>set.add(i));
-}
-});
-document.getElementById("shopping").innerHTML=
-set.size?Array.from(set).map(i=>`<div>${i}</div>`).join(""):"<span class='small'>未チェック</span>";
-}
-
-render();
-</script>
-
-</body>
-</html>
+const normalItems={
+"焼き魚定食":["魚","米","味噌"],
+"そば温玉":["そば","卵"],
+"親子丼ライト":["鶏肉","卵","米"],
+"豚しゃぶ野菜":["豚肉","白菜","きのこ"],
+"鶏照り焼き":["鶏肉"],
+"冷奴":["豆腐"],
+"サバ缶定食":["サバ缶","米"],
+"卵トースト":["卵","パン"],
+"冷やしうどん鶏":["うどん","鶏肉"],
+"麻婆豆腐":["豆腐","ひき肉"],
+"ハンバーグ":["ひき肉"],
+"野菜スープ":["野菜"],
+"ツナ卵サンド":["ツナ","卵","パン"],
+"鶏そぼろ丼":["]()
